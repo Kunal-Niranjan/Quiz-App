@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body{
+            padding-top: 20px;
+        }
+        .container{
+            max-width: 600px;
+        }
+        .timer{
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center" id="t">Timer</h1>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title text-center" id="q">Question</h4>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="option" id="radioa" onclick="setValue('a')">
+                        <span id="c1">Option A</span>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="option" id="radiob" onclick="setValue('b')">
+                        <span id="c2">Option B</span>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="option" id="radioc" onclick="setValue('c')">
+                        <span id="c3">Option C</span>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="option" id="radiod" onclick="setValue('d')">
+                        <span id="c4">Option D</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary" onclick="next()" id="n">Next</button>
+                    <center><button class="btn btn-danger"  onclick="next1()" id="s" style="display: none;">Submit</button></center>
+                </div>
+                <h4 class="text-center mt-3" id="res"></h4>
+                <h4 class="text-center mt-3" id="at"></h4>
+                <h4 class="text-center mt-3" id="nat"></h4>
+                <h4 class="text-center mt-3" id="corr"></h4>
+                <h4 class="text-center mt-3" id="incorr"></h4>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        var data = [
+            { q: 'Who is the Prime Minister of India?', a: 'Mohan Yadav ji', b: 'Adityanath Yogi ji', c: 'Narendra Modi ji', d: 'none', ans: 'c' },
+            { q: 'How many wonders of the world?', a: '7 Wonders', b: '8 Wonders', c: '9 Wonders', d: '6 Wonders', ans: 'a' },
+            { q: 'What is Unix?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'c' },
+            { q: 'What is Python?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is SQL?', a: 'A language', b: 'A logic', c: 'A platform', d: 'A database language', ans: 'd' },
+            { q: 'What is C?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is Postman?', a: 'A language', b: 'A logic', c: 'A platform', d: 'A tool', ans: 'd' },
+            { q: 'What are hooks?', a: 'A language', b: 'A logic', c: 'A platform', d: 'None', ans: 'd' },
+            { q: 'What is CSS?', a: 'Cascading Style Sheets', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' },
+            { q: 'What is HTML?', a: 'A tag language', b: 'A logic', c: 'A platform', d: 'None', ans: 'a' }
+        ];
+
+        var i=0
+        var Estring=''
+        var res=0
+        var attempted=0
+        var correct=0
+        var incorrect=0
+        var t;
+
+        function show(){
+            if (i>=data.length){
+            document.getElementById('s').style.display='block';
+            document.getElementById('n').style.display='none';
+            document.getElementById('res').innerText='Submitted successfully | Your score'+res;
+            document.getElementById('at').innerText='Attempted'+attempted;
+            document.getElementById('nat').innerText='Not Attempted'+(data.length-attempted);
+            document.getElementById('corr').innerText='Correct'+correct;
+            document.getElementById('incorr').innerText='Incorrect'+incorrect;
+            }
+            var Q = data[i];
+            document.getElementById('q').innerText = Q.q;
+            document.getElementById('c1').innerText = Q.a;
+            document.getElementById('c2').innerText = Q.b;
+            document.getElementById('c3').innerText = Q.c;
+            document.getElementById('c4').innerText = Q.d;
+
+            document.getElementById('radioa').checked = false;
+            document.getElementById('radiob').checked = false;
+            document.getElementById('radioc').checked = false;
+            document.getElementById('radiod').checked = false;
+
+            if (Estring) {
+                document.getElementById('radio'+Estring).checked=true;
+            }
+            var count=30;
+            t = setInterval(function(){
+                document.getElementById('t').innerText=count;
+                count--;
+                if (count<0){
+                    clearInterval(t);
+                    next();
+                }
+            }, 1000);
+        }
+        function setValue(value) {
+            Estring = value;
+        }
+        function next(){
+            if (Estring){
+                attempted++;
+                if (Estring===data[i].ans){
+                    res++;
+                    correct++;
+                } else{
+                    res-=0.5;
+                    incorrect++;
+                }
+                Estring='';
+            }
+            clearInterval(t);
+            i++;
+            show();
+        }
+        function next1(){
+            document.getElementById('res').innerText='Submitted successfully | Your score'+res;
+            document.getElementById('at').innerText='Attempted'+attempted;
+            document.getElementById('nat').innerText='Not Attempted'+(data.length-attempted);
+            document.getElementById('corr').innerText='Correct'+correct;
+            document.getElementById('incorr').innerText='Incorrect'+incorrect;
+            clearInterval(t);
+        }
+        show();
+    </script>
+</body>
+</html>
